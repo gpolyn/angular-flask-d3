@@ -1,15 +1,26 @@
 version: '2'
 services:
+  db:
+    image: mongo
+  mongo-seed:
+    build: ./mongo-seed
+    depends_on:
+      - db
+    links:
+      - db
   backend-s:
     build: ./backend
     image: ansrivas/server:latest
     container_name: backend-c
+    depends_on:
+      - mongo-seed
+    links:
+      - db
   frontend-s:
-    build: ./front
-    image: ansrivas/frontend:latest
+    build: ./frontend
     container_name: frontend-c
     ports:
-      - "3000:80"
+      - "80:80"
     links:
       - backend-s
     depends_on:
