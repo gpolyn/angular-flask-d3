@@ -5,3 +5,6 @@ Flask-Security==1.7.5
 Flask-SQLAlchemy==2.1
 git+https://github.com/ansrivas/pylogging.git
 pymongo
+Flask-JWT
+Werkzeug
+Flask-PyMongo

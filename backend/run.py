@@ -3,6 +3,7 @@
 from pylogging import HandlerType, setup_logger
 
 from flask_app import server
+from flask_app import jwt_server
 
 if __name__ == '__main__':
     setup_logger(log_directory='./logs',
@@ -13,4 +14,5 @@ if __name__ == '__main__':
                  max_file_size_bytes=100000,
                  when_to_rotate='D',
                  change_log_level=None)
-    server.main()
+    # server.main()
+    jwt_server.main()
