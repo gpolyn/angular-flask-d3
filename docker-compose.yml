@@ -2,6 +2,7 @@ version: '2'
 services:
   db:
     image: mongo
+    restart: always
   mongo-seed:
     build: ./mongo-seed
     depends_on:
@@ -11,6 +12,7 @@ services:
   backend-s:
     build: ./backend
     image: ansrivas/server:latest
+    restart: always
     container_name: backend-c
     depends_on:
       - mongo-seed
@@ -19,6 +21,7 @@ services:
   frontend-s:
     build: ./frontend
     container_name: frontend-c
+    restart: always
     ports:
       - "80:80"
     links:
