@@ -1,5 +1,6 @@
 import traceback
 import json
+import datetime
 from bson.json_util import dumps
 from flask import Flask, jsonify, request, Response
 from flask_jwt import JWT, jwt_required, current_identity
@@ -22,11 +23,16 @@ class User(object):
     def __str__(self):
         return "User(id='%s')" % self.id
  
-user = User(1, 'user', 'password')
+user = User(1, 'admin', 'pass4')
+user2 = User(2, 'admin', 'pass8')
  
  
 def authenticate(username, password):
     if username == user.username and password == user.password:
+        logger.info('login with admin and pass4')
+        return user
+    if username == user2.username and password == user2.password:
+        logger.info('login with admin and pass8')
         return user
  
 def identity(payload):
@@ -34,6 +40,7 @@ def identity(payload):
  
 app.debug = True
 app.config['SECRET_KEY'] = 'super-secret'
+app.config['JWT_EXPIRATION_DELTA'] = datetime.timedelta(seconds=600)
  
 jwt = JWT(app, authenticate, identity)
  
@@ -49,28 +56,14 @@ def after_request(response):
             response.headers['Access-Control-Allow-Headers'] = headers
     return response
  
- 
-@app.route('/unprotected')
-def unprotected():
-    return jsonify({
-        'message': 'This is an unprotected resource.'
-    })
- 
- 
-@app.route('/protected')
-@jwt_required()
-def protected():
-    return jsonify({
-        'message': 'This is a protected resource.',
-        'current_identity': str(current_identity)
-    })
-
-@app.route('/api/getdata', methods=['POST'])
+@app.route('/api/<chart_type>', methods=['POST'])
 # @auth_token_required
-def get_data():
+@jwt_required()
+def get_data(chart_type):
     """Get dummy data returned from the server."""
+    logger.info(chart_type)
     logger.info('Data served from jwt_server')
-    a = db.pie.find_one()
+    a = db[chart_type].find_one()
     json_response = dumps(a['data'])
     # data = {'Heroes': ['Hero1', 'Hero2', 'Hero3']}
     # json_response = json.dumps(data)
